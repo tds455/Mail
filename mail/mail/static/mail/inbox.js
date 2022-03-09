@@ -31,3 +31,37 @@ function load_mailbox(mailbox) {
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
 }
+
+function send_mail() {
+  
+  // Retrieve values from form
+  var recipients = document.getElementById("compose-recipients").value;
+  var subject = document.getElementById("compose-subject").value;
+  var body = document.getElementById("compose-body").value;
+
+  // Validate form
+
+
+  // Create POST request
+  // Based on sample code in CS50W Mail specification
+  fetch('/emails', {
+    method: 'POST',
+    body: JSON.stringify({
+        recipients: recipients,
+        subject: subject,
+        body: body
+    })
+  })
+  .then(response => response.json())
+  .then(result => {
+      // Print result
+      console.log(result);
+  });
+
+  // Handle return values
+  
+  
+  // If successful, load sent mailbox
+
+
+}
