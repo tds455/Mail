@@ -35,9 +35,11 @@ function load_mailbox(mailbox) {
 function send_mail() {
   
   // Retrieve values from form
-  var recipients = document.getElementById("compose-recipients").value;
-  var subject = document.getElementById("compose-subject").value;
-  var body = document.getElementById("compose-body").value;
+  // https://www.w3schools.com/jsref/met_document_queryselector.asp
+  var recipients = document.querySelector("#compose-recipients").value;
+  var subject = document.querySelector("#compose-subject").value;
+  var body = document.querySelector("#compose-body").value;
+  print(recipients)
 
   // Validate form
 
