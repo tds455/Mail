@@ -43,6 +43,8 @@ function send_mail() {
 
   // Validate form
 
+  // Validate recipients, and seperate if multiple are present
+
 
   // Create POST request
   // Based on sample code in CS50W Mail specification
@@ -64,6 +66,6 @@ function send_mail() {
   
   
   // If successful, load sent mailbox
-  load_mailbox('sent')
+  load_mailbox('sent');
 
 }
