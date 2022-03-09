@@ -40,7 +40,6 @@ function send_mail() {
   var recipients = document.querySelector("#compose-recipients").value;
   var subject = document.querySelector("#compose-subject").value;
   var body = document.querySelector("#compose-body").value;
-  console.log(recipients)
 
   // Validate form
 
@@ -65,6 +64,6 @@ function send_mail() {
   
   
   // If successful, load sent mailbox
-
+  load_mailbox('sent')
 
 }
