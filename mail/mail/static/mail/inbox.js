@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
   document.querySelector('#compose').addEventListener('click', compose_email);
+  document.querySelector('#submit').addEventListener('click', send_mail);
 
   // By default, load the inbox
   load_mailbox('inbox');
@@ -39,7 +40,7 @@ function send_mail() {
   var recipients = document.querySelector("#compose-recipients").value;
   var subject = document.querySelector("#compose-subject").value;
   var body = document.querySelector("#compose-body").value;
-  print(recipients)
+  console.log(recipients)
 
   // Validate form
 
