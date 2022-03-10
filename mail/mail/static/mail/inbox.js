@@ -31,7 +31,24 @@ function load_mailbox(mailbox) {
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
-}
+
+  // Retrieve mailbox content using GET request
+  // Based on sample code in CS50W Mail specification, adjusted to reflect which mailbox the user is trying to access
+  // After retrieving, store each e-mail in it's own div (https://www.tutorialspoint.com/how-to-add-a-new-element-to-html-dom-in-javascript) and 50W Mail hints section, using a for loop
+  // for looping through an array in JS - forEach https://www.w3schools.com/jsref/jsref_foreach.asp
+  // Note - Use `` and not '' when making fetch request
+  fetch(`/emails/${mailbox}`)
+  .then(response => response.json())
+  .then(emails => {
+    emails.forEach(email => {
+    const element = document.createElement('div');
+    // Render the sender, recipients, subject, timestamp and body to user
+    element.innerHTML = "<p>testing hello</p>";
+    document.querySelector('#emails-view').appendChild(element);
+    });
+
+  });
+  }
 
 function send_mail() {
   
@@ -40,11 +57,6 @@ function send_mail() {
   var recipients = document.querySelector("#compose-recipients").value;
   var subject = document.querySelector("#compose-subject").value;
   var body = document.querySelector("#compose-body").value;
-
-  // Validate form
-
-  // Validate recipients, and seperate if multiple are present
-
 
   // Create POST request
   // Based on sample code in CS50W Mail specification
@@ -62,9 +74,6 @@ function send_mail() {
       console.log(result);
   });
 
-  // Handle return values
-  
-  
   // If successful, load sent mailbox
   load_mailbox('sent');
 
