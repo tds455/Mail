@@ -64,7 +64,7 @@ function load_mailbox(mailbox) {
     }
 
     // Make e-mail "clickable"
-    element.addEventListener('click', event => {open_email(email['id'])});
+    element.addEventListener('click', event => {open_email(email['id'], mailbox)});
 
     // Render the e-mails back to the user
     document.querySelector('#emails-view').appendChild(element);
@@ -73,7 +73,7 @@ function load_mailbox(mailbox) {
   });
   }
 
-function open_email(id) {
+function open_email(id, mailbox) {
   // Hide other views
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
@@ -94,50 +94,45 @@ function open_email(id) {
       element.innerHTML = `<p class="col-sm">Sender: ${email['sender']}</p>  <p class="col-sm">Recipients: ${email['recipients']}</p>  <p class="col-sm">Subject: ${email['subject']}</p> <p class="col-sm">Date and time: ${email['timestamp']} <p class="col-sm">Body: ${email['body']}</p>`
       document.querySelector('#emails-view').appendChild(element);
 
-      // Allow e-mail to be archived
+      // mark the email as read.
+      fetch(`/emails/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({read: true})
+      })
 
+      // Check if e-mail is sent.  If so, the archive and reply buttons are not required.
+      if (mailbox != "sent") {
       // Allow e-mail to be replied to
-       const reply = document.createElement('div');
-        
-      const archive = document.createElement('div');
-      console.log(email['archived'])
-      // Check if email is archived. Provide option to toggle status
-      // Display the relevent mailbox after the action has been performed
-      if (email['archived'] == true) {
-        archive.innerHTML = `<button type="button" class="btn btn-info">Unarchive</button>`
-        archive.addEventListener('click', event => fetch(`/emails/${id}`, {
-          method: 'PUT',
-          body: JSON.stringify({archived: false})
-          })
-          // Wait for API call to complete before displaying mailbox
-          .then(response => load_mailbox('inbox'))
-          ) 
-      }
-      else {
-        archive.innerHTML = `<button type="button" class="btn btn-info">Archive</button>`
-        archive.addEventListener('click', event => fetch(`/emails/${id}`, {
-          method: 'PUT',
-          body: JSON.stringify({archived: true}) 
-        })
-          // Wait for API call to complete before displaying mailbox
-          .then(response => load_mailbox('inbox'))
-        )  
-      }
-      document.querySelector('#emails-view').appendChild(archive);
+        const reply = document.createElement('div');
+        reply.innerHTML = `<button type="button" class="btn btn-success col-sm-2">Reply</button>`
+        document.querySelector('#emails-view').appendChild(reply);
 
-
-
-  });
-  // mark the email as read.
-  fetch(`/emails/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify({
-        read: true
-    })
-  })
-  
-
-
+        // Allow e-mail to be archived  
+        const archive = document.createElement('div');
+        // Check if email is archived. Provide option to toggle status
+        // Display the relevent mailbox after the action has been performed
+        if (email['archived'] == true) {
+          archive.innerHTML = `<button type="button" class="btn btn-info col-sm-2">Unarchive</button>`
+          archive.addEventListener('click', event => fetch(`/emails/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify({archived: false})
+            })
+            // Wait for API call to complete before displaying mailbox
+            .then(response => load_mailbox('inbox'))
+            )}
+        else {
+          archive.innerHTML = `<button type="button" class="btn btn-info col-sm-2">Archive</button>`
+          archive.addEventListener('click', event => fetch(`/emails/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify({archived: true}) 
+            })
+            // Wait for API call to complete before displaying mailbox
+            .then(response => load_mailbox('inbox'))
+            )}
+        document.querySelector('#emails-view').appendChild(archive);
+        }
+    
+      });
 }
 
 
