@@ -35,9 +35,6 @@ function load_mailbox(mailbox) {
   // When a mailbox is visited, the name of the mailbox should appear at the top of the page
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
 
-
-
-
   // When a mailbox is visited, the application should first query the API for the latest emails in that mailbox.
   // Based on sample code in CS50W Mail specification, adjusted to reflect which mailbox the user is trying to access
   // After retrieving, store each e-mail in it's own div (https://www.tutorialspoint.com/how-to-add-a-new-element-to-html-dom-in-javascript) and 50W Mail hints section, using a for loop
@@ -47,13 +44,17 @@ function load_mailbox(mailbox) {
   .then(response => response.json())
   .then(emails => {
     emails.forEach(email => {
+
     // Each email should then be rendered in its own box (e.g. as a <div> with a border) that displays who the email is from, what the subject line is, and the timestamp of the email.
     const element = document.createElement('div');
+
     // Show the sender, subject and timestamp of each email
     // https://developer.mozilla.org/en-US/docs/Web/API/Element/classList
     element.classList.add("emails");
+
     // element.classList.add("row");
     element.innerHTML = `<p class="col-sm">Sender: ${email['sender']}</p>  <p class="col-sm">Subject: ${email['subject']}</p> <p class="col-sm">Date and time: ${email['timestamp']}</p>`
+    
     // If the email is unread, it should appear with a white background. If the email has been read, it should appear with a gray background.
     // https://www.codegrepper.com/code-examples/javascript/javascript+add+style+to+div
     if (email['read'] == 0) {
@@ -74,6 +75,7 @@ function load_mailbox(mailbox) {
   }
 
 function open_email(id, mailbox) {
+
   // Hide other views
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
@@ -98,12 +100,14 @@ function open_email(id, mailbox) {
       const reply = document.createElement('div');
       reply.innerHTML = `<button type="button" class="btn btn-success col-sm-2">Reply</button>`
       reply.addEventListener('click', event => {
+
         // Show compose view and hide other views
         document.querySelector('#emails-view').style.display = 'none';
         document.querySelector('#compose-view').style.display = 'block';
 
         // Pre-populate fields
         document.querySelector('#compose-recipients').value = email['sender'];
+
         // Check if subject already begins with "Re: ", if negative append to e-mail
         if (email['subject'].startsWith("Re: ")) {
           document.querySelector('#compose-subject').value = email['subject'];
@@ -111,15 +115,18 @@ function open_email(id, mailbox) {
         else {
           document.querySelector('#compose-subject').value = "Re: "+email['subject'];
         }
+        
+        // Populate body with message
         document.querySelector('#compose-body').innerHTML = "On "+email['timestamp']+" "+email['sender']+" wrote: `"+email['body']+"`";
         })
+
+        // Add reply button
         document.querySelector('#emails-view').appendChild(reply);
 
       // mark the email as read.
       fetch(`/emails/${id}`, {
       method: 'PUT',
       body: JSON.stringify({read: true})
-    
       })
 
       // Add archive button
@@ -137,15 +144,18 @@ function open_email(id, mailbox) {
             method: 'PUT',
             body: JSON.stringify({archived: false})
             })
+
             // Wait for API call to complete before displaying mailbox
             .then(response => load_mailbox('inbox'))
             )}
+
         else {
           archive.innerHTML = `<button type="button" class="btn btn-info col-sm-2">Archive</button>`
           archive.addEventListener('click', event => fetch(`/emails/${id}`, {
             method: 'PUT',
             body: JSON.stringify({archived: true}) 
             })
+            
             // Wait for API call to complete before displaying mailbox
             .then(response => load_mailbox('inbox'))
             )}
@@ -173,7 +183,9 @@ function send_mail() {
         subject: subject,
         body: body
     })
+    
   })
+  // Wait for reply before proceeding to load mailbox
   .then(response => response.json())
   ;
 
