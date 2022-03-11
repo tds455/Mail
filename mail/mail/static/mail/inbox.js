@@ -29,6 +29,9 @@ function load_mailbox(mailbox) {
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
 
+  // Empty inner HTML
+  document.querySelector('#emails-view').innerHTML = ``;
+
   // When a mailbox is visited, the name of the mailbox should appear at the top of the page
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
 
@@ -79,8 +82,6 @@ function open_email(id) {
   // Empty inner HTML
   document.querySelector('#emails-view').innerHTML = ``;
 
-
-
   //  make a GET request to /emails/<email_id> to request the email.
   fetch(`/emails/${id}`)
   .then(response => response.json())
@@ -89,11 +90,51 @@ function open_email(id) {
       // show the email’s sender, recipients, subject, timestamp, and body.
       const element = document.createElement('div');
       element.classList.add("emails");
-      element.innerHTML = `<p class="col-sm">Sender: ${email['sender']}</p>  <p class="col-sm">Subject: ${email['recipients']}</p>  <p class="col-sm">Subject: ${email['subject']}</p> <p class="col-sm">Date and time: ${email['timestamp']} <p class="col-sm">Date and time: ${email['body']}</p>`
+      element.classList.add("col-sm");
+      element.innerHTML = `<p class="col-sm">Sender: ${email['sender']}</p>  <p class="col-sm">Recipients: ${email['recipients']}</p>  <p class="col-sm">Subject: ${email['subject']}</p> <p class="col-sm">Date and time: ${email['timestamp']} <p class="col-sm">Body: ${email['body']}</p>`
       document.querySelector('#emails-view').appendChild(element);
 
-      // mark the email as read.
+      // Allow e-mail to be archived
+
+      // Allow e-mail to be replied to
+       const reply = document.createElement('div');
+        
+      const archive = document.createElement('div');
+      console.log(email['archived'])
+      // Check if email is archived. Provide option to toggle status
+      // Display the relevent mailbox after the action has been performed
+      if (email['archived'] == true) {
+        archive.innerHTML = `<button type="button" class="btn btn-info">Unarchive</button>`
+        archive.addEventListener('click', event => fetch(`/emails/${id}`, {
+          method: 'PUT',
+          body: JSON.stringify({archived: false})
+          })
+          // Wait for API call to complete before displaying mailbox
+          .then(response => load_mailbox('inbox'))
+          ) 
+      }
+      else {
+        archive.innerHTML = `<button type="button" class="btn btn-info">Archive</button>`
+        archive.addEventListener('click', event => fetch(`/emails/${id}`, {
+          method: 'PUT',
+          body: JSON.stringify({archived: true}) 
+        })
+          // Wait for API call to complete before displaying mailbox
+          .then(response => load_mailbox('inbox'))
+        )  
+      }
+      document.querySelector('#emails-view').appendChild(archive);
+
+
+
   });
+  // mark the email as read.
+  fetch(`/emails/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+        read: true
+    })
+  })
   
 
 
