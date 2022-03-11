@@ -185,11 +185,7 @@ function send_mail() {
     })
     
   })
-  // Wait for reply before proceeding to load mailbox
-  .then(response => response.json())
-  ;
-
-  // If successful, load sent mailbox
-  load_mailbox('sent');
+  // Wait for reply before proceeding to load sent mailbox
+  .then(response => load_mailbox('sent'))
 
 }
