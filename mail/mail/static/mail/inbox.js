@@ -94,21 +94,41 @@ function open_email(id, mailbox) {
       element.innerHTML = `<p class="col-sm">Sender: ${email['sender']}</p>  <p class="col-sm">Recipients: ${email['recipients']}</p>  <p class="col-sm">Subject: ${email['subject']}</p> <p class="col-sm">Date and time: ${email['timestamp']} <p class="col-sm">Body: ${email['body']}</p>`
       document.querySelector('#emails-view').appendChild(element);
 
+      // Add reply button
+      const reply = document.createElement('div');
+      reply.innerHTML = `<button type="button" class="btn btn-success col-sm-2">Reply</button>`
+      reply.addEventListener('click', event => {
+        // Show compose view and hide other views
+        document.querySelector('#emails-view').style.display = 'none';
+        document.querySelector('#compose-view').style.display = 'block';
+
+        // Pre-populate fields
+        document.querySelector('#compose-recipients').value = email['sender'];
+        // Check if subject already begins with "Re: ", if negative append to e-mail
+        if (email['subject'].startsWith("Re: ")) {
+          document.querySelector('#compose-subject').value = email['subject'];
+        }
+        else {
+          document.querySelector('#compose-subject').value = "Re: "+email['subject'];
+        }
+        document.querySelector('#compose-body').innerHTML = "On "+email['timestamp']+" "+email['sender']+" wrote: `"+email['body']+"`";
+        })
+        document.querySelector('#emails-view').appendChild(reply);
+
       // mark the email as read.
       fetch(`/emails/${id}`, {
       method: 'PUT',
       body: JSON.stringify({read: true})
+    
       })
 
-      // Check if e-mail is sent.  If so, the archive and reply buttons are not required.
+      // Add archive button
+      // Check if e-mail is sent.  If so, the archive  button is not required.
       if (mailbox != "sent") {
-      // Allow e-mail to be replied to
-        const reply = document.createElement('div');
-        reply.innerHTML = `<button type="button" class="btn btn-success col-sm-2">Reply</button>`
-        document.querySelector('#emails-view').appendChild(reply);
 
         // Allow e-mail to be archived  
         const archive = document.createElement('div');
+
         // Check if email is archived. Provide option to toggle status
         // Display the relevent mailbox after the action has been performed
         if (email['archived'] == true) {
@@ -155,10 +175,7 @@ function send_mail() {
     })
   })
   .then(response => response.json())
-  .then(result => {
-      // Print result
-      console.log(result);
-  });
+  ;
 
   // If successful, load sent mailbox
   load_mailbox('sent');
