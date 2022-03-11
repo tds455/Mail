@@ -76,6 +76,11 @@ function open_email(id) {
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
 
+  // Empty inner HTML
+  document.querySelector('#emails-view').innerHTML = ``;
+
+
+
   //  make a GET request to /emails/<email_id> to request the email.
   fetch(`/emails/${id}`)
   .then(response => response.json())
