@@ -166,13 +166,13 @@ function open_email(id, mailbox) {
 }
 
 
-function send_mail() {
-  
+function send_mail(event) {
+
   // Retrieve values from form
   // https://www.w3schools.com/jsref/met_document_queryselector.asp
   var recipients = document.querySelector("#compose-recipients").value;
   var subject = document.querySelector("#compose-subject").value;
-  var body = document.querySelector("#compose-body").value;
+  var body = document.querySelector("#compose-body").value;+
 
   // Create POST request
   // Based on sample code in CS50W Mail specification
@@ -183,9 +183,14 @@ function send_mail() {
         subject: subject,
         body: body
     })
-    
   })
-  // Wait for reply before proceeding to load sent mailbox
+  // Wait for response then load sent mailbox
   .then(response => load_mailbox('sent'))
 
+  // I recieved a broken pipe error which was redirecting the page back to INBOX after visiting SENT for a brief period of time.
+  // https://stackoverflow.com/questions/68234571/django-broken-pipe-message
+  // The above link advises to use preventDefault(); to fix this
+  // https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault
+  // This prevents the site being redirected back to "load_mailbox('inbox')" as per the default function
+  event.preventDefault();
 }
