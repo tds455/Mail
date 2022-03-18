@@ -181,7 +181,8 @@ function send_mail(event) {
     body: JSON.stringify({
         recipients: recipients,
         subject: subject,
-        body: body
+        body: body,
+        read: false
     })
   })
   // Wait for response then load sent mailbox
