@@ -8,9 +8,9 @@
 
         virtualenv env
 
-- Install requirements
+- Install Django
 
-        pip install -r requirements.txt
+        pip install django
 
 - Start Django server
 
